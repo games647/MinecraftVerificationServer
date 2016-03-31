@@ -3,7 +3,6 @@ package com.github.games647.verificationserver.listener;
 import com.github.games647.verificationserver.VerificationServer;
 
 import java.util.UUID;
-import java.util.logging.Level;
 
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.MinecraftConstants;
@@ -20,7 +19,7 @@ public class LoginListener implements ServerLoginHandler {
         UUID uuid = profile.getId();
         String username = profile.getName();
 
-        VerificationServer.getLogger().log(Level.INFO, "Session verified: {0}", profile);
+        VerificationServer.getLogger().info("Session verified: {} {}", uuid, username);
 
         ServerDisconnectPacket kickPacket = new ServerDisconnectPacket("Session verified");
         session.send(kickPacket);

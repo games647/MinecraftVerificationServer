@@ -1,8 +1,7 @@
 package com.github.games647.verificationserver.listener;
 
+import com.github.games647.verificationserver.Config;
 import com.github.games647.verificationserver.VerificationServer;
-
-import java.util.logging.Level;
 
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.MinecraftConstants;
@@ -15,14 +14,24 @@ import org.spacehq.packetlib.Session;
 
 public class ServerInfoListener implements ServerInfoBuilder {
 
+    private final PlayerInfo playerInfo;
+    private final TextMessage textMessage;
+
+    public ServerInfoListener(Config config) {
+        int onlinePlayers = Integer.parseInt(config.get("onlinePlayers"));
+        int maxPlayers = Integer.parseInt(config.get("maxPlayers"));
+
+        playerInfo = new PlayerInfo(onlinePlayers, maxPlayers, new GameProfile[0]);
+
+        String motd = config.get("motd");
+        textMessage = new TextMessage(motd);
+    }
+
     @Override
     public ServerStatusInfo buildInfo(Session session) {
-        VerificationServer.getLogger().log(Level.INFO, "Pinging client: {0}", session);
+        VerificationServer.getLogger().info("Pinging client: {}", session);
 
         VersionInfo versionInfo = new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION);
-        PlayerInfo playerInfo = new PlayerInfo(-1, -1, new GameProfile[0]);
-        TextMessage textMessage = new TextMessage("Hello world!");
-
         return new ServerStatusInfo(versionInfo, playerInfo, textMessage, null);
     }
 }
