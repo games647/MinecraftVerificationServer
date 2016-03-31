@@ -5,16 +5,25 @@ import com.github.games647.verificationserver.listener.LoginListener;
 import com.github.games647.verificationserver.listener.ServerInfoListener;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.io.IOException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spacehq.mc.protocol.MinecraftConstants;
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.packetlib.Server;
+import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
 public class VerificationServer {
@@ -22,7 +31,9 @@ public class VerificationServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VerificationServer.class);
 
     private static final String HOST = "127.0.0.1";
-    private static final int PORT = 25565;
+    private static final int PORT = 25_565;
+
+    private static final AtomicBoolean running = new AtomicBoolean(true);
 
     public static void main(String[] args) throws Exception {
         VerificationServer server = null;
@@ -31,35 +42,44 @@ public class VerificationServer {
             config.loadFile();
             config.verify();
 
+            String logName = LOGGER.getName();
+            java.util.logging.Logger.getLogger(logName).setLevel(Level.parse(config.get("logLevel")));
+
             server = new VerificationServer(config);
             server.startServer();
             server.initDatabase();
             server.createTable();
 
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted() && running.get()) {
                 Thread.sleep(1_000);
             }
         } finally {
+            LOGGER.info("Stopping server...");
             if (server != null) {
-                HikariDataSource dataSource = server.getDataSource();
-                if (dataSource != null) {
-                    dataSource.close();
-                }
+                server.close();
             }
         }
+
+        LOGGER.info("Stopped");
     }
 
     public static Logger getLogger() {
         return LOGGER;
     }
 
+    public static void stop() {
+        running.getAndSet(false);
+    }
+
     private final Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
     private final Config config;
     private final TokenGenerator tokenGenerator;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final Map<Session, Integer> protocolVersions = new ConcurrentHashMap<>();
 
     private HikariDataSource dataSource;
 
-    public VerificationServer(Config config) {
+    public VerificationServer(Config config) throws IOException {
         this.config = config;
         this.tokenGenerator = new TokenGenerator(Integer.parseInt(config.get("tokenLength")));
 
@@ -68,10 +88,10 @@ public class VerificationServer {
         server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 100);
 
         //motd
-        server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoListener(config));
+        server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoListener(this, config));
 
-        server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, new LoginListener());
-        server.addListener(new ConnectionListener());
+        server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, new LoginListener(this, config));
+        server.addListener(new ConnectionListener(this, config));
     }
 
     public void startServer() {
@@ -107,25 +127,29 @@ public class VerificationServer {
             throw new IllegalStateException("No query specified");
         }
 
-        Connection con = null;
-        try {
-            con = dataSource.getConnection();
+        try (Connection con = dataSource.getConnection()) {
             Statement statement = con.createStatement();
             statement.execute(createUsers);
             statement.execute(createToken);
+
+            LOGGER.info("Finished database setup");
         } catch (SQLException sqlEx) {
             LOGGER.error("Failed to create Table", sqlEx);
             //rethrow it to abort execution
             throw sqlEx;
-        } finally {
-            if (con != null) {
-                con.close();
-            }
         }
     }
 
-    public Config getConfig() {
-        return config;
+    public void close() throws InterruptedException {
+        if (server != null) {
+            server.close();
+        }
+
+        if (dataSource != null) {
+            //end the last queries
+            executorService.awaitTermination(dataSource.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+            dataSource.close();
+        }
     }
 
     public HikariDataSource getDataSource() {
@@ -134,5 +158,13 @@ public class VerificationServer {
 
     public TokenGenerator getTokenGenerator() {
         return tokenGenerator;
+    }
+
+    public Map<Session, Integer> getProtocolVersions() {
+        return protocolVersions;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 }

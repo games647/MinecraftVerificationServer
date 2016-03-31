@@ -2,14 +2,15 @@
 
 ## Description
 
-Verifies if a minecraft user has premium (paid) account by connecting to fake server
+Verifies if a minecraft user has premium (paid) account by connecting to fake server.
 
 ## Features
 
 * Simple
 * Fast
 * Very configurable
-* Works with 1.7+ servers
+* Works with 1.8+ servers
+* Shutdowns gracefully
 
 ## Run
 

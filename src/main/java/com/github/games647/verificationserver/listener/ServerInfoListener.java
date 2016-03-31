@@ -2,12 +2,16 @@ package com.github.games647.verificationserver.listener;
 
 import com.github.games647.verificationserver.Config;
 import com.github.games647.verificationserver.VerificationServer;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+import javax.imageio.ImageIO;
 
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.MinecraftConstants;
@@ -20,13 +24,19 @@ import org.spacehq.packetlib.Session;
 
 public class ServerInfoListener implements ServerInfoBuilder {
 
+    private final VerificationServer verificationServer;
+
+    private final BufferedImage favicon;
+
     private final PlayerInfo playerInfo;
     private final TextMessage textMessage;
 
     private final String gameVersion;
     private final int protocolVersion;
 
-    public ServerInfoListener(Config config) {
+    public ServerInfoListener(VerificationServer verificationServer, Config config) throws IOException {
+        this.verificationServer = verificationServer;
+
         int onlinePlayers = Integer.parseInt(config.get("onlinePlayers"));
         int maxPlayers = Integer.parseInt(config.get("maxPlayers"));
 
@@ -48,14 +58,22 @@ public class ServerInfoListener implements ServerInfoBuilder {
         } else {
             this.protocolVersion = Integer.parseInt(protocol);
         }
+
+        File file = new File("favicon.png");
+        if (file.exists()) {
+            favicon = ImageIO.read(file);
+        } else {
+            favicon = null;
+        }
     }
 
     @Override
     public ServerStatusInfo buildInfo(Session session) {
         VerificationServer.getLogger().info("Pinging client: {}", session);
 
-        VersionInfo versionInfo = new VersionInfo(gameVersion, protocolVersion);
-        return new ServerStatusInfo(versionInfo, playerInfo, textMessage, null);
+        int clientProtocol = verificationServer.getProtocolVersions().getOrDefault(session, protocolVersion);
+        VersionInfo versionInfo = new VersionInfo(gameVersion, clientProtocol);
+        return new ServerStatusInfo(versionInfo, playerInfo, textMessage, favicon);
     }
 
     private GameProfile[] getPlayers(Config config) {
@@ -71,7 +89,7 @@ public class ServerInfoListener implements ServerInfoBuilder {
         propertyNames.stream()
                 .filter((key) -> key.startsWith("fakePlayer."))
                 .forEach((key) -> {
-                    String playerName = key.replace(key, "fakePlayer.");
+                    String playerName = key.replace("fakePlayer.", "");
                     UUID uuid = UUID.fromString(properties.getProperty(key));
                     profiles.add(new GameProfile(uuid, playerName));
                 });

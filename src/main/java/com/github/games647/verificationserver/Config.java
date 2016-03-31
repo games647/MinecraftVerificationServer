@@ -18,15 +18,9 @@ public class Config {
     private Properties config;
 
     public Config() throws IOException {
-        InputStream resourceStream = null;
-        try {
-            resourceStream = getClass().getResourceAsStream('/' + FILE_NAME);
+        try (InputStream resourceStream = getClass().getResourceAsStream('/' + FILE_NAME)) {
             config = new Properties();
             config.load(resourceStream);
-        } finally {
-            if (resourceStream != null) {
-                resourceStream.close();
-            }
         }
     }
 
@@ -38,19 +32,17 @@ public class Config {
             saveConfig();
         }
 
-        BufferedReader reader = null;
-        try {
-            reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             config.load(reader);
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
         }
     }
 
     public String get(String key) {
         return config.getProperty(key);
+    }
+
+    public Properties getProperties() {
+        return config;
     }
 
     public void verify() {
@@ -61,21 +53,15 @@ public class Config {
         File file = new File(FILE_NAME);
         Path path = file.toPath();
 
+        //go to the root folder of the jar
         InputStream resourceStream = getClass().getResourceAsStream('/' + FILE_NAME);
-        OutputStream out = null;
-        try {
-            out = Files.newOutputStream(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
-
-            byte[] buf = new byte[1024];
+        try (OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+            byte[] buf = new byte[1_024];
             int len;
             while ((len = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
         } finally {
-            if (out != null) {
-                out.close();
-            }
-
             if (resourceStream != null) {
                 resourceStream.close();
             }
