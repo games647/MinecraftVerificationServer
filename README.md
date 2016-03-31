@@ -20,3 +20,9 @@ Verifies if a minecraft user has premium (paid) account by connecting to fake se
 
 * Java 8+
 * MySQL - recommend is MariaDB
+
+## Screenshots
+
+![Verified kick](http://i.imgur.com/WhyeYJW.png)
+
+![server motd](http://i.imgur.com/tQkO2Gb.png)
