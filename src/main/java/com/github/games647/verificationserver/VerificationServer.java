@@ -36,31 +36,21 @@ public class VerificationServer {
     private static final AtomicBoolean running = new AtomicBoolean(true);
 
     public static void main(String[] args) throws Exception {
-        VerificationServer server = null;
-        try {
-            Config config = new Config();
-            config.loadFile();
-            config.verify();
+        Config config = new Config();
+        config.loadFile();
+        config.verify();
 
-            String logName = LOGGER.getName();
-            java.util.logging.Logger.getLogger(logName).setLevel(Level.parse(config.get("logLevel")));
+        String logName = LOGGER.getName();
+        java.util.logging.Logger.getLogger(logName).setLevel(Level.parse(config.get("logLevel")));
 
-            server = new VerificationServer(config);
-            server.startServer();
-            server.initDatabase();
-            server.createTable();
+        VerificationServer server = new VerificationServer(config);
+        server.startServer();
+        server.initDatabase();
+        server.createTable();
 
-            while (!Thread.currentThread().isInterrupted() && running.get()) {
-                Thread.sleep(1_000);
-            }
-        } finally {
-            LOGGER.info("Stopping server...");
-            if (server != null) {
-                server.close();
-            }
+        while (!Thread.currentThread().isInterrupted() && running.get()) {
+            Thread.sleep(1_000);
         }
-
-        LOGGER.info("Stopped");
     }
 
     public static Logger getLogger() {
@@ -95,11 +85,9 @@ public class VerificationServer {
     }
 
     public void startServer() {
-        if (!server.isListening()) {
-            LOGGER.debug("Binding server");
-            server.bind(true);
-            LOGGER.info("Server started");
-        }
+        LOGGER.debug("Binding server");
+        server.bind(true);
+        LOGGER.info("Server started");
     }
 
     public void initDatabase() {
@@ -113,7 +101,7 @@ public class VerificationServer {
         String jdbcUrl = "jdbc:" + driverType + "://" + host + ':' + port + '/' + database;
         databaseConfig.setJdbcUrl(jdbcUrl);
 
-        databaseConfig.setUsername(config.get("username"));
+        databaseConfig.setUsername("root");
         databaseConfig.setPassword(config.get("password"));
         databaseConfig.setConnectionTimeout(Long.parseLong(config.get("connectionTimeout")));
 
