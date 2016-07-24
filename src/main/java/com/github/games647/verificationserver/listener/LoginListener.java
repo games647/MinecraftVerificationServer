@@ -6,7 +6,6 @@ import com.github.games647.verificationserver.VerificationServer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -57,26 +56,16 @@ public class LoginListener implements ServerLoginHandler {
         try (Connection con = verificationServer.getDataSource().getConnection()) {
             con.setAutoCommit(false);
 
-            int id = -1;
             if (!updateUsers.trim().isEmpty()) {
                     NamedParameterStatement statement = new NamedParameterStatement(con, updateUsers
                         , PreparedStatement.RETURN_GENERATED_KEYS);
                 setParameters(statement, uuid, username, host, token);
                 statement.execute();
-
-                try (ResultSet generatedKeys = statement.getStatement().getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        id = generatedKeys.getInt(1);
-                    }
-                }
             }
 
             if (!updateToken.trim().isEmpty()) {
                 NamedParameterStatement statement = new NamedParameterStatement(con, updateToken);
                 setParameters(statement, uuid, username, host, token);
-                if (statement.getIndexes("id") != null) {
-                    statement.setInt("id", id);
-                }
 
                 statement.executeUpdate();
             }
