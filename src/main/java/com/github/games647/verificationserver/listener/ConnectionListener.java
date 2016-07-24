@@ -23,7 +23,7 @@ public class ConnectionListener extends ServerAdapter {
         Session session = sessionAddedEvent.getSession();
         session.addListener(new PacketListener(verificationServer, config));
 
-        VerificationServer.getLogger().debug("Connecting client: {0}", session);
+        VerificationServer.getLogger().debug("Connecting client: {}", session.getHost());
 
         super.sessionAdded(sessionAddedEvent);
     }
@@ -31,7 +31,7 @@ public class ConnectionListener extends ServerAdapter {
     @Override
     public void sessionRemoved(SessionRemovedEvent sessionRemovedEvent) {
         Session session = sessionRemovedEvent.getSession();
-        VerificationServer.getLogger().info("Disconnecting client: {0}", session);
+        VerificationServer.getLogger().info("Disconnecting client: {}", session.getHost());
         verificationServer.getProtocolVersions().remove(session);
 
         super.sessionRemoved(sessionRemovedEvent);

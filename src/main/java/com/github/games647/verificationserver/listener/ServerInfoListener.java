@@ -69,7 +69,7 @@ public class ServerInfoListener implements ServerInfoBuilder {
 
     @Override
     public ServerStatusInfo buildInfo(Session session) {
-        VerificationServer.getLogger().info("Pinging client: {}", session);
+        VerificationServer.getLogger().info("Pinging client: {}", session.getHost());
 
         int clientProtocol = verificationServer.getProtocolVersions().getOrDefault(session, protocolVersion);
         VersionInfo versionInfo = new VersionInfo(gameVersion, clientProtocol);
