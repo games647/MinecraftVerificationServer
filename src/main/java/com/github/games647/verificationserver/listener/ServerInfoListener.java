@@ -87,8 +87,8 @@ public class ServerInfoListener implements ServerInfoBuilder {
 
         List<GameProfile> profiles = new ArrayList<>();
         propertyNames.stream()
-                .filter((key) -> key.startsWith("fakePlayer."))
-                .forEach((key) -> {
+                .filter(key -> key.startsWith("fakePlayer."))
+                .forEach(key -> {
                     String playerName = key.replace("fakePlayer.", "");
                     UUID uuid = UUID.fromString(properties.getProperty(key));
                     profiles.add(new GameProfile(uuid, playerName));
