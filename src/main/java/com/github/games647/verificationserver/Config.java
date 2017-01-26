@@ -1,13 +1,13 @@
 package com.github.games647.verificationserver;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
@@ -25,14 +25,12 @@ public class Config {
     }
 
     public void loadFile() throws IOException {
-        File file = new File(FILE_NAME);
-        Path path = file.toPath();
-
-        if (!file.exists()) {
+        Path file = Paths.get(FILE_NAME);
+        if (Files.notExists(file)) {
             saveConfig();
         }
 
-        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             config.load(reader);
         }
     }
@@ -50,12 +48,11 @@ public class Config {
     }
 
     private void saveConfig() throws IOException {
-        File file = new File(FILE_NAME);
-        Path path = file.toPath();
+        Path file = Paths.get(FILE_NAME);
 
         //go to the root folder of the jar
         InputStream resourceStream = getClass().getResourceAsStream('/' + FILE_NAME);
-        try (OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+        try (OutputStream out = Files.newOutputStream(file, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
             byte[] buf = new byte[1_024];
             int len;
             while ((len = resourceStream.read(buf)) > 0) {

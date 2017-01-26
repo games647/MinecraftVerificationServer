@@ -5,8 +5,16 @@ import com.github.games647.verificationserver.listener.LoginListener;
 import com.github.games647.verificationserver.listener.ServerInfoListener;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.spacehq.mc.protocol.MinecraftConstants;
+import org.spacehq.mc.protocol.MinecraftProtocol;
+import org.spacehq.packetlib.Server;
+import org.spacehq.packetlib.Session;
+import org.spacehq.packetlib.tcp.TcpSessionFactory;
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,14 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.spacehq.mc.protocol.MinecraftConstants;
-import org.spacehq.mc.protocol.MinecraftProtocol;
-import org.spacehq.packetlib.Server;
-import org.spacehq.packetlib.Session;
-import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
 public class VerificationServer {
 

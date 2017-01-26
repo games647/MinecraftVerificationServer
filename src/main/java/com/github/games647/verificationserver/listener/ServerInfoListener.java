@@ -2,17 +2,6 @@ package com.github.games647.verificationserver.listener;
 
 import com.github.games647.verificationserver.Config;
 import com.github.games647.verificationserver.VerificationServer;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
-import javax.imageio.ImageIO;
-
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.MinecraftConstants;
 import org.spacehq.mc.protocol.data.message.TextMessage;
@@ -21,6 +10,14 @@ import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.VersionInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
 import org.spacehq.packetlib.Session;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class ServerInfoListener implements ServerInfoBuilder {
 
@@ -59,9 +56,9 @@ public class ServerInfoListener implements ServerInfoBuilder {
             this.protocolVersion = Integer.parseInt(protocol);
         }
 
-        File file = new File("favicon.png");
-        if (file.exists()) {
-            favicon = ImageIO.read(file);
+        Path file = Paths.get("favicon.png");
+        if (Files.exists(file)) {
+            favicon = ImageIO.read(file.toFile());
         } else {
             favicon = null;
         }
@@ -91,6 +88,7 @@ public class ServerInfoListener implements ServerInfoBuilder {
                 .forEach(key -> {
                     String playerName = key.replace("fakePlayer.", "");
                     UUID uuid = UUID.fromString(properties.getProperty(key));
+
                     profiles.add(new GameProfile(uuid, playerName));
                 });
 
