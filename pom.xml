@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>MinecraftVerificationServer</name>
-    <version>1.0</version>
+    <version>1.2</version>
     <description>Minecraft that verifies if a player has premium account</description>
     <url>https://github.com/games647/MinecraftVerificationServer</url>
 
@@ -19,25 +19,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/games647/MinecraftVerificationServer/issues</url>
-    </issueManagement>
-
-    <scm>
-        <url>https://github.com/games647/MinecraftVerificationServer</url>
-        <connection>scm:git:git://github.com/games647/MinecraftVerificationServer.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:games647/MinecraftVerificationServer.git</developerConnection>
-    </scm>
-
-    <licenses>
-        <license>
-            <name>The MIT License</name>
-            <url>http://opensource.org/licenses/MIT</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <build>
         <finalName>${project.name}-${project.version}</finalName>
 
@@ -45,9 +26,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <minimizeJar>true</minimizeJar>
                 </configuration>
                 <executions>
                     <execution>
@@ -77,51 +59,43 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-
-            <!--Add the license to jar in order to see it in the final jar-->
-            <resource>
-                <directory>${basedir}</directory>
-                <includes>
-                    <include>LICENSE</include>
-                </includes>
-            </resource>
         </resources>
     </build>
 
     <repositories>
         <repository>
-            <id>spacehq</id>
-            <url>https://repo.spacehq.org/content/repositories/snapshots/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
         <!--Lightweight server implementation-->
         <dependency>
-            <groupId>org.spacehq</groupId>
+            <groupId>com.github.steveice10</groupId>
             <artifactId>mcprotocollib</artifactId>
-            <version>1.11.2-SNAPSHOT</version>
+            <version>1.12-1</version>
         </dependency>
 
         <!--Database pooling-->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>2.6.0</version>
+            <version>2.7.1</version>
         </dependency>
 
         <!--Logging framework implements slf4j which is required by hikari-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.22</version>
+            <version>1.7.25</version>
         </dependency>
 
         <!--Database driver for MariaDB (or MySQL)-->
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>1.5.5</version>
+            <version>2.1.1</version>
         </dependency>
     </dependencies>
 </project>

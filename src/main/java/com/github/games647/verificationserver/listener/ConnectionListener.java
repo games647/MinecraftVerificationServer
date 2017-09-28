@@ -2,11 +2,10 @@ package com.github.games647.verificationserver.listener;
 
 import com.github.games647.verificationserver.Config;
 import com.github.games647.verificationserver.VerificationServer;
-
-import org.spacehq.packetlib.Session;
-import org.spacehq.packetlib.event.server.ServerAdapter;
-import org.spacehq.packetlib.event.server.SessionAddedEvent;
-import org.spacehq.packetlib.event.server.SessionRemovedEvent;
+import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.event.server.ServerAdapter;
+import com.github.steveice10.packetlib.event.server.SessionAddedEvent;
+import com.github.steveice10.packetlib.event.server.SessionRemovedEvent;
 
 public class ConnectionListener extends ServerAdapter {
 

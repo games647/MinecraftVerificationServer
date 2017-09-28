@@ -3,16 +3,13 @@ package com.github.games647.verificationserver;
 import com.github.games647.verificationserver.listener.ConnectionListener;
 import com.github.games647.verificationserver.listener.LoginListener;
 import com.github.games647.verificationserver.listener.ServerInfoListener;
+import com.github.steveice10.mc.protocol.MinecraftConstants;
+import com.github.steveice10.mc.protocol.MinecraftProtocol;
+import com.github.steveice10.packetlib.Server;
+import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.spacehq.mc.protocol.MinecraftConstants;
-import org.spacehq.mc.protocol.MinecraftProtocol;
-import org.spacehq.packetlib.Server;
-import org.spacehq.packetlib.Session;
-import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -25,6 +22,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VerificationServer {
 
@@ -49,7 +49,7 @@ public class VerificationServer {
         server.createTable();
 
         while (!Thread.currentThread().isInterrupted() && running.get()) {
-            Thread.sleep(1_000);
+            TimeUnit.SECONDS.sleep(1);
         }
     }
 

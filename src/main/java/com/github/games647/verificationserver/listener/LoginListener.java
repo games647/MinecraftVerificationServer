@@ -3,18 +3,16 @@ package com.github.games647.verificationserver.listener;
 import com.github.games647.verificationserver.Config;
 import com.github.games647.verificationserver.NamedParameterStatement;
 import com.github.games647.verificationserver.VerificationServer;
+import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.MinecraftConstants;
+import com.github.steveice10.mc.protocol.ServerLoginHandler;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
+import com.github.steveice10.packetlib.Session;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
-
-import org.spacehq.mc.auth.data.GameProfile;
-import org.spacehq.mc.protocol.MinecraftConstants;
-
-import org.spacehq.mc.protocol.ServerLoginHandler;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
-import org.spacehq.packetlib.Session;
 
 public class LoginListener implements ServerLoginHandler {
 

@@ -7,14 +7,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author adam_crume
- * http://www.javaworld.com/article/2077706/core-java/named-parameters-for-preparedstatement.html
+ * https://www.javaworld.com/article/2077706/core-java/named-parameters-for-preparedstatement.html
  */
 public class NamedParameterStatement {
 

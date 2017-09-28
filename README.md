@@ -23,6 +23,6 @@ Verifies if a minecraft user has premium (paid) account by connecting to fake se
 
 ## Screenshots
 
-![Verified kick](http://i.imgur.com/WhyeYJW.png)
+![Verified kick](https://i.imgur.com/WhyeYJW.png)
 
-![server motd](http://i.imgur.com/tQkO2Gb.png)
+![server motd](https://i.imgur.com/tQkO2Gb.png)

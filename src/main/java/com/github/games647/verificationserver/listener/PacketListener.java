@@ -2,13 +2,12 @@ package com.github.games647.verificationserver.listener;
 
 import com.github.games647.verificationserver.Config;
 import com.github.games647.verificationserver.VerificationServer;
-
-import org.spacehq.mc.protocol.data.handshake.HandshakeIntent;
-import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
-import org.spacehq.packetlib.Session;
-import org.spacehq.packetlib.event.session.PacketReceivedEvent;
-import org.spacehq.packetlib.event.session.SessionAdapter;
-import org.spacehq.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
+import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
+import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
+import com.github.steveice10.packetlib.event.session.SessionAdapter;
+import com.github.steveice10.packetlib.packet.Packet;
 
 public class PacketListener extends SessionAdapter {
 
