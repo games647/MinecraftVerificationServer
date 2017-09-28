@@ -8,7 +8,7 @@ public class TokenGenerator {
             .toCharArray();
 
     private final int size;
-    protected SecureRandom random = new SecureRandom();
+    protected final SecureRandom random = new SecureRandom();
 
     public TokenGenerator(int size) {
         this.size = size;

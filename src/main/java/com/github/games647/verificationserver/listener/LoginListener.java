@@ -46,7 +46,7 @@ public class LoginListener implements ServerLoginHandler {
         final String username = profile.getName();
 
         VerificationServer.getLogger().info("Session verified: {} {}", uuid, username);
-        verificationServer.getExecutorService().execute(() -> saveVerification(uuid, username, host, session));
+        verificationServer.getExecutor().execute(() -> saveVerification(uuid, username, host, session));
     }
 
     private void saveVerification(UUID uuid, String username, String host, Session session) {
@@ -103,15 +103,13 @@ public class LoginListener implements ServerLoginHandler {
 
     private void onSuccess(Session session, String token) {
         String message = kickMessage.replace("%code", token);
-        ServerDisconnectPacket kickPacket = new ServerDisconnectPacket(message);
-        session.send(kickPacket);
+        session.send(new ServerDisconnectPacket(message));
     }
 
     private void onFailure(Session session) {
-        ServerDisconnectPacket errorKickPacket = new ServerDisconnectPacket(errorMessage);
-        session.send(errorKickPacket);
+        session.send(new ServerDisconnectPacket(errorMessage));
         if (shutdownOnError) {
-            VerificationServer.getLogger().warn("Shuting down server because an error occured");
+            VerificationServer.getLogger().warn("Shutting down server because an error occurred");
             VerificationServer.stop();
         }
     }

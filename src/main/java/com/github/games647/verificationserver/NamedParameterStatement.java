@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,7 +113,7 @@ public class NamedParameterStatement {
         // replace the lists of Integer objects with arrays of ints
         for (Object o : paramMap.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
-            List list = (List) entry.getValue();
+            Collection list = (List) entry.getValue();
             int[] indexes = new int[list.size()];
             int i = 0;
             for (Object aList : list) {

@@ -17,11 +17,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +41,6 @@ public class VerificationServer {
     public static void main(String[] args) throws Exception {
         Config config = new Config();
         config.loadFile();
-        config.verify();
 
         String logName = LOGGER.getName();
         java.util.logging.Logger.getLogger(logName).setLevel(Level.parse(config.get("logLevel")));
@@ -64,7 +66,7 @@ public class VerificationServer {
     private final Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
     private final Config config;
     private final TokenGenerator tokenGenerator;
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
     private final Map<Session, Integer> protocolVersions = new ConcurrentHashMap<>();
 
     private HikariDataSource dataSource;
@@ -73,7 +75,7 @@ public class VerificationServer {
         this.config = config;
         this.tokenGenerator = new TokenGenerator(Integer.parseInt(config.get("tokenLength")));
 
-        //activae online mode
+        //activate online mode
         server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, true);
         server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 100);
 
@@ -115,10 +117,10 @@ public class VerificationServer {
             throw new IllegalStateException("No query specified");
         }
 
-        try (Connection con = dataSource.getConnection()) {
-            Statement statement = con.createStatement();
-            statement.execute(createUsers);
-            statement.execute(createToken);
+        try (Connection con = dataSource.getConnection();
+             Statement stmt = con.createStatement()) {
+            stmt.execute(createUsers);
+            stmt.execute(createToken);
 
             LOGGER.info("Finished database setup");
         } catch (SQLException sqlEx) {
@@ -135,12 +137,12 @@ public class VerificationServer {
 
         if (dataSource != null) {
             //end the last queries
-            executorService.awaitTermination(dataSource.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+            executor.awaitTermination(dataSource.getConnectionTimeout(), TimeUnit.MILLISECONDS);
             dataSource.close();
         }
     }
 
-    public HikariDataSource getDataSource() {
+    public DataSource getDataSource() {
         return dataSource;
     }
 
@@ -152,7 +154,7 @@ public class VerificationServer {
         return protocolVersions;
     }
 
-    public ExecutorService getExecutorService() {
-        return executorService;
+    public Executor getExecutor() {
+        return executor;
     }
 }

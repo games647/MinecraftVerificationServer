@@ -15,7 +15,7 @@ public class Config {
 
     private static final String FILE_NAME = "config.properties";
 
-    private Properties config;
+    private final Properties config;
 
     public Config() throws IOException {
         try (InputStream resourceStream = getClass().getResourceAsStream('/' + FILE_NAME)) {
@@ -43,24 +43,16 @@ public class Config {
         return config;
     }
 
-    public void verify() {
-
-    }
-
     private void saveConfig() throws IOException {
         Path file = Paths.get(FILE_NAME);
 
         //go to the root folder of the jar
-        InputStream resourceStream = getClass().getResourceAsStream('/' + FILE_NAME);
-        try (OutputStream out = Files.newOutputStream(file, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+        try (InputStream resourceStream = getClass().getResourceAsStream('/' + FILE_NAME);
+             OutputStream out = Files.newOutputStream(file, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
             byte[] buf = new byte[1_024];
             int len;
             while ((len = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, len);
-            }
-        } finally {
-            if (resourceStream != null) {
-                resourceStream.close();
             }
         }
     }
