@@ -9,7 +9,7 @@ Verifies if a minecraft user has premium (paid) account by connecting to fake se
 * Simple
 * Fast
 * Very configurable
-* Works with 1.8+ servers
+* Works with 1.12+ servers
 * Shutdowns gracefully
 
 ## Run
@@ -18,7 +18,7 @@ Verifies if a minecraft user has premium (paid) account by connecting to fake se
 
 ## Requirements
 
-* Java 8+
+* Java 9+
 * MySQL - recommend is MariaDB
 
 ## Screenshots
