@@ -29,7 +29,7 @@ public class PacketListener extends SessionAdapter {
             if (handshakePacket.getIntent() == HandshakeIntent.STATUS) {
                 Session session = receiveEvent.getSession();
                 int protocolVersion = handshakePacket.getProtocolVersion();
-                verificationServer.getProtocolVersions().put(session, protocolVersion);
+                verificationServer.getProtocolVersions().put(session.getHost(), protocolVersion);
             }
         }
 

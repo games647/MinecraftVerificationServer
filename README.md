@@ -2,7 +2,7 @@
 
 ## Description
 
-Verifies if a minecraft user has premium (paid) account by connecting to fake server.
+Verifies if a Minecraft user has premium (paid) account by connecting to fake server.
 
 ## Features
 

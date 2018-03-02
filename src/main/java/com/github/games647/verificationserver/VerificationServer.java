@@ -6,7 +6,6 @@ import com.github.games647.verificationserver.listener.ServerInfoListener;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.packetlib.Server;
-import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -67,7 +66,7 @@ public class VerificationServer {
     private final Config config;
     private final TokenGenerator tokenGenerator;
     private final ExecutorService executor = Executors.newCachedThreadPool();
-    private final Map<Session, Integer> protocolVersions = new ConcurrentHashMap<>();
+    private final Map<String, Integer> protocolVersions = new ConcurrentHashMap<>();
 
     private HikariDataSource dataSource;
 
@@ -150,7 +149,7 @@ public class VerificationServer {
         return tokenGenerator;
     }
 
-    public Map<Session, Integer> getProtocolVersions() {
+    public Map<String, Integer> getProtocolVersions() {
         return protocolVersions;
     }
 

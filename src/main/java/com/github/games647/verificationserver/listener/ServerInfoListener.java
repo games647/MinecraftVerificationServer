@@ -63,7 +63,7 @@ public class ServerInfoListener implements ServerInfoBuilder {
 
         Path file = Paths.get("favicon.png");
         if (Files.exists(file)) {
-            favicon = ImageIO.read(file.toFile());
+            favicon = ImageIO.read(Files.newInputStream(file));
         } else {
             favicon = null;
         }
@@ -71,9 +71,10 @@ public class ServerInfoListener implements ServerInfoBuilder {
 
     @Override
     public ServerStatusInfo buildInfo(Session session) {
-        VerificationServer.getLogger().info("Pinging client: {}", session.getHost());
+        String host = session.getHost();
+        VerificationServer.getLogger().info("Pinging client: {}", host);
 
-        int clientProtocol = verificationServer.getProtocolVersions().getOrDefault(session, protocolVersion);
+        int clientProtocol = verificationServer.getProtocolVersions().getOrDefault(host, protocolVersion);
         VersionInfo versionInfo = new VersionInfo(gameVersion, clientProtocol);
         return new ServerStatusInfo(versionInfo, playerInfo, textMessage, favicon);
     }

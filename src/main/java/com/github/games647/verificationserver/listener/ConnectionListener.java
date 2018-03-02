@@ -30,8 +30,10 @@ public class ConnectionListener extends ServerAdapter {
     @Override
     public void sessionRemoved(SessionRemovedEvent sessionRemovedEvent) {
         Session session = sessionRemovedEvent.getSession();
-        VerificationServer.getLogger().info("Disconnecting client: {}", session.getHost());
-        verificationServer.getProtocolVersions().remove(session);
+
+        String host = session.getHost();
+        VerificationServer.getLogger().info("Disconnecting client: {}", host);
+        verificationServer.getProtocolVersions().remove(host);
 
         super.sessionRemoved(sessionRemovedEvent);
     }
