@@ -12,6 +12,7 @@ import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.packetlib.Session;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +37,7 @@ public class ServerInfoListener implements ServerInfoBuilder {
     private final String gameVersion;
     private final int protocolVersion;
 
-    public ServerInfoListener(VerificationServer verificationServer, Config config) throws IOException {
+    public ServerInfoListener(VerificationServer verificationServer, Config config) {
         this.verificationServer = verificationServer;
 
         int onlinePlayers = Integer.parseInt(config.get("onlinePlayers"));
@@ -63,7 +64,14 @@ public class ServerInfoListener implements ServerInfoBuilder {
 
         Path file = Paths.get("favicon.png");
         if (Files.exists(file)) {
-            favicon = ImageIO.read(Files.newInputStream(file));
+            BufferedImage icon = null;
+            try (BufferedInputStream in = new BufferedInputStream(Files.newInputStream(file))) {
+                icon = ImageIO.read(in);
+            } catch (IOException ioEx) {
+                VerificationServer.getLogger().warn("Failed to load favicon", ioEx);
+            }
+
+            favicon = icon;
         } else {
             favicon = null;
         }
