@@ -106,6 +106,15 @@ public class VerificationServer {
         databaseConfig.setPassword(config.get("password"));
         databaseConfig.setConnectionTimeout(Long.parseLong(config.get("connectionTimeout")));
 
+        if (driverType.contains("mysql")) {
+            // default prepStmtCacheSize 25 - amount of cached statements - enough for us
+            // default prepStmtCacheSqlLimit 256 - length of SQL - our queries are not longer
+            // disabled by default - will return the same prepared statement instance
+            databaseConfig.addDataSourceProperty("cachePrepStmts", true);
+            // default false - available in newer versions caches the statements server-side
+            databaseConfig.addDataSourceProperty("useServerPrepStmts", true);
+        }
+
         dataSource = new HikariDataSource(databaseConfig);
     }
 
@@ -130,9 +139,7 @@ public class VerificationServer {
     }
 
     public void close() throws InterruptedException {
-        if (server != null) {
-            server.close();
-        }
+        server.close();
 
         if (dataSource != null) {
             //end the last queries
